@@ -1,0 +1,39 @@
+namespace CalorificServerApp.Data
+{
+    public class Food
+    {
+        public string Name { get; set; }
+        public double Calories { get; set; }
+        public double Fat { get; set; }
+        public double Sodium { get; set; }
+        public double Carbohydrates { get; set; }
+        public double Fiber { get; set; }
+        public double Sugars { get; set; }
+        public double Protein { get; set; }
+    }
+
+    public class User
+    {
+        public string? Name { get; set; }
+        public string Gender { get; set; }
+        public int Age { get; set; }
+        public double Height { get; set; }
+        public double Weight { get; set; }
+        public string SelectedAmr { get; set; }
+        public string SelectedGoal { get; set; }
+    }
+
+    public class Log
+    {
+        public DateTime Date { get; set; }
+        public string FoodName { get; set; }
+        public int Grams { get; set; }
+        public double Calories { get; set; }
+        public double Fat { get; set; }
+        public double Sodium { get; set; }
+        public double Carbohydrates { get; set; }
+        public double Fiber { get; set; }
+        public double Sugars { get; set; }
+        public double Protein { get; set; }
+    }
+}
