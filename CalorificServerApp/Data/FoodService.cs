@@ -5,56 +5,7 @@ namespace CalorificServerApp.Data
     public class FoodService
     {
         private readonly string con = "Data Source=calorific.db";
-
-        public async Task InitializeDatabase()
-        {
-            using (var connection = new SqliteConnection(con))
-            {
-                await connection.OpenAsync();
-
-                var new_tables = connection.CreateCommand();
-                new_tables.CommandText = @"
-                    CREATE TABLE IF NOT EXISTS FoodItems (
-                        Name TEXT PRIMARY KEY,
-                        Calories REAL,
-                        Fat REAL,
-                        Sodium REAL,
-                        Carbohydrates REAL,
-                        Fiber REAL,
-                        Sugars REAL,
-                        Protein REAL
-                    );
-
-                    CREATE TABLE IF NOT EXISTS Users (
-                        Name TEXT PRIMARY KEY,
-                        Gender TEXT,
-                        Age INTEGER,
-                        Height REAL,
-                        Weight REAL,
-                        SelectedAmr TEXT,
-                        SelectedGoal TEXT
-                    );
-
-                    CREATE TABLE IF NOT EXISTS Logs (
-                        Username TEXT,
-                        Date TEXT,
-                        Time DATETIME,
-                        FoodName TEXT,
-                        Grams INTEGER,
-                        Calories REAL,
-                        Fat REAL,
-                        Sodium REAL,
-                        Carbohydrates REAL,
-                        Fiber REAL,
-                        Sugars REAL,
-                        Protein REAL
-                    );
-                ";
-
-                await new_tables.ExecuteNonQueryAsync();
-            }
-        }
-
+        
         public async Task<List<Food>> GetFoodItems()
         {
             var foodItems = new List<Food>();
@@ -228,6 +179,58 @@ namespace CalorificServerApp.Data
                 Sugars = reader.GetDouble(10),
                 Protein = reader.GetDouble(11)
             };
+        }
+
+
+
+        //////////////////////////////////////////INITIALIZING AND POPULATING START DB//////////////////////////////////////////
+        public async Task InitializeDatabase()
+        {
+            using (var connection = new SqliteConnection(con))
+            {
+                await connection.OpenAsync();
+
+                var new_tables = connection.CreateCommand();
+                new_tables.CommandText = @"
+                    CREATE TABLE IF NOT EXISTS FoodItems (
+                        Name TEXT PRIMARY KEY,
+                        Calories REAL,
+                        Fat REAL,
+                        Sodium REAL,
+                        Carbohydrates REAL,
+                        Fiber REAL,
+                        Sugars REAL,
+                        Protein REAL
+                    );
+
+                    CREATE TABLE IF NOT EXISTS Users (
+                        Name TEXT PRIMARY KEY,
+                        Gender TEXT,
+                        Age INTEGER,
+                        Height REAL,
+                        Weight REAL,
+                        SelectedAmr TEXT,
+                        SelectedGoal TEXT
+                    );
+
+                    CREATE TABLE IF NOT EXISTS Logs (
+                        Username TEXT,
+                        Date TEXT,
+                        Time DATETIME,
+                        FoodName TEXT,
+                        Grams INTEGER,
+                        Calories REAL,
+                        Fat REAL,
+                        Sodium REAL,
+                        Carbohydrates REAL,
+                        Fiber REAL,
+                        Sugars REAL,
+                        Protein REAL
+                    );
+                ";
+
+                await new_tables.ExecuteNonQueryAsync();
+            }
         }
         public async Task PopulateFoodItems()
         {
