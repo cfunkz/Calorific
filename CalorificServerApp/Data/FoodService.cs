@@ -4,11 +4,11 @@ namespace CalorificServerApp.Data
 {
     public class FoodService
     {
-        private readonly string _connectionString = "Data Source=calorific.db";
+        private readonly string con = "Data Source=calorific.db";
 
         public async Task InitializeDatabase()
         {
-            using (var connection = new SqliteConnection(_connectionString))
+            using (var connection = new SqliteConnection(con))
             {
                 await connection.OpenAsync();
 
@@ -58,7 +58,7 @@ namespace CalorificServerApp.Data
         {
             var foodItems = new List<Food>();
 
-            using (var connection = new SqliteConnection(_connectionString))
+            using (var connection = new SqliteConnection(con))
             {
                 await connection.OpenAsync();
 
@@ -94,7 +94,7 @@ namespace CalorificServerApp.Data
 
         public async Task AddFoodItem(string name, double calories, double fat, double sodium, double carbohydrates, double fiber, double sugars, double protein)
         {
-            using (var connection = new SqliteConnection(_connectionString))
+            using (var connection = new SqliteConnection(con))
             {
                 await connection.OpenAsync();
 
@@ -115,7 +115,7 @@ namespace CalorificServerApp.Data
 
         public async Task AddUser(string name, string gender, int age, double height, double weight, string selectedAmr, string selectedGoal)
         {
-            using (var connection = new SqliteConnection(_connectionString))
+            using (var connection = new SqliteConnection(con))
             {
                 await connection.OpenAsync();
 
@@ -135,7 +135,7 @@ namespace CalorificServerApp.Data
 
         public async Task<User> GetUser(string name)
         {
-            using (var connection = new SqliteConnection(_connectionString))
+            using (var connection = new SqliteConnection(con))
             {
                 await connection.OpenAsync();
 
@@ -166,7 +166,7 @@ namespace CalorificServerApp.Data
 
         public async Task AddLog(Log log, string username)
         {
-                using (var connection = new SqliteConnection(_connectionString))
+                using (var connection = new SqliteConnection(con))
                 {
                     await connection.OpenAsync();
 
@@ -193,7 +193,7 @@ namespace CalorificServerApp.Data
         {
             var logs = new List<Log>();
 
-            using var connection = new SqliteConnection(_connectionString);
+            using var connection = new SqliteConnection(con);
             await connection.OpenAsync();
 
             var command = connection.CreateCommand();
