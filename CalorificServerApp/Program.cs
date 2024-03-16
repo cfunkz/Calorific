@@ -8,7 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-builder.Services.AddSingleton<FoodService>();
+builder.Services.AddTransient<FoodService>();
 var app = builder.Build();
 
 var foodService = app.Services.GetRequiredService<FoodService>();
