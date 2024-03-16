@@ -1,4 +1,4 @@
-﻿@page "/"
+@page "/"
 @using CalorificServerApp.Data
 @inject FoodService foodService
 
@@ -343,11 +343,11 @@
 
     protected override async Task OnInitializedAsync()
     {
-        foodItems = await foodService.GetFoodItemsAsync();
+        foodItems = await foodService.GetFoodItems();
 
     }
 
-    private async Task AddLog()
+    private async void AddLog()
     {
         // get the food item details from the database
         var selectedFood = foodItems.FirstOrDefault(food => food.Name == newEntry.FoodName);
@@ -365,9 +365,9 @@
         }
 
         // Add the log entry to the database
-        await foodService.AddLogAsync(newEntry, loggedInUsername);
+        await foodService.AddLog(newEntry, loggedInUsername);
         // Refresh the logs list
-        logs = await foodService.GetLogsForUserAsync(loggedInUsername);
+        logs = await foodService.GetLogsForUser(loggedInUsername);
         // Reset the newEntry
         newEntry = new Log { Date = DateTime.Today, FoodName = "Steak" };
     }
@@ -387,15 +387,15 @@
         return (totalCalories, totalFat, totalSodium, totalCarbohydrates, totalFiber, totalSugars, totalProtein);
     }
 
-    private async Task FindUser()
+    private async void FindUser()
     {
-        user = await foodService.GetUserAsync(Name);
+        user = await foodService.GetUser(Name);
         if (user != null)
         {
             userRegistred = "yes";
             loggedInUsername = Name;
             Calculate();
-            logs = await foodService.GetLogsForUserAsync(loggedInUsername);
+            logs = await foodService.GetLogsForUser(loggedInUsername);
         }
         else
         {
@@ -444,16 +444,16 @@
 
     }
 
-    private async Task Register()
+    private async void Register()
     {
-        await foodService.AddUserAsync(Name, Gender, Age, Height, Weight, SelectedAmr, SelectedGoal);
+        await foodService.AddUser(Name, Gender, Age, Height, Weight, SelectedAmr, SelectedGoal);
         userRegistred = "yes";
         FindUser();
     }
 
-    private async Task AddFoodItem()
+    private async void AddFoodItem()
     {
-        await foodService.AddFoodItemAsync(foodname, foodcalories, foodfats, foodsodium, foodcarbohydrates, foodfiber, foodsugars, foodprotein);
+        await foodService.AddFoodItem(foodname, foodcalories, foodfats, foodsodium, foodcarbohydrates, foodfiber, foodsugars, foodprotein);
         foodname = "";
         foodcalories = 0;
         foodfats = 0;
@@ -462,6 +462,6 @@
         foodfiber= 0;
         foodsugars = 0;
         foodprotein = 0;
-        foodItems = await foodService.GetFoodItemsAsync();
+        foodItems = await foodService.GetFoodItems();
     }
 }
