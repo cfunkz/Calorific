@@ -8,11 +8,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-builder.Services.AddTransient<FoodService>();
+builder.Services.AddScoped<FoodService>();
 var app = builder.Build();
-
-var foodService = app.Services.GetRequiredService<FoodService>();
-await foodService.InitializeDatabase(); //initialize db
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
