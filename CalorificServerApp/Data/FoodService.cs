@@ -1,229 +1,467 @@
-using Microsoft.Data.Sqlite;
+@page "/"
+@using CalorificServerApp.Data
+@inject FoodService foodService
 
-namespace CalorificServerApp.Data
-{
-    public class FoodService
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-12">
+            @if (userRegistred == "no")
+            {
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Login</h5>
+                        <div class="mb-3">
+                            <input type="text" placeholder="Enter Name" @bind="Name" class="form-control" />
+                        </div>
+                        <button @onclick="FindUser" class="btn btn-primary">Login</button>
+                        <button @onclick="GoToRegister" class="btn btn-secondary">Register</button>
+                    </div>
+                </div>
+            }
+            else if (userRegistred == "yes")
+            {
+                <div class="text-center">
+                    <h3>Hello, @loggedInUsername !</h3>
+                    <hr />
+                     <h3>Todays Summary</h3>
+                 </div>
+                <div class="container mt-4">
+                    <div class="row">
+                        <!-- Calorie Goal Card -->
+                        <div class="col">
+                            <div class="card">
+                                <div class="card-header text-center bg-primary text-white">
+                                    Calorie Goal <strong>(kcal)</strong>
+                                </div>
+                                <div class="card-body text-center">
+                                    <h5 class="card-title">
+                                        <span class="text-success">@CalculateTodaysNutrients().totalCalories</span> / <span class="text-danger">@caloriesNeeded</span>
+                                    </h5>
+                                    <p class="card-text">Keep track of your calorie intake!</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Weight Goal Card -->
+                        <div class="col">
+                            <div class="card">
+                                <div class="card-header text-center bg-primary text-white">
+                                    Current Weight <strong>(KG)</strong>
+                                </div>
+                                <div class="card-body text-center">
+                                    <h5 class="card-title">
+                                        <span class="text-info">@user.Weight</span>
+                                    </h5>
+                                    <p class="card-text">Achieve your weight goal.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Nutrient Intake Cards -->
+                <div class="container mt-4">
+                    <div class="row">
+                        <!-- Fat Intake Card -->
+                        <div class="col">
+                            <div class="card">
+                                <div class="card-header text-center bg-success text-white">
+                                    Fat <strong>(g)</strong>
+                                </div>
+                                <div class="card-body text-center">
+                                    <h5 class="card-title">
+                                        <span class="text-success">@CalculateTodaysNutrients().totalFat</span>
+                                    </h5>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sodium Intake Card -->
+                        <div class="col">
+                            <div class="card">
+                                <div class="card-header text-center bg-success text-white">
+                                    Sodium <strong>(mg)</strong>
+                                </div>
+                                <div class="card-body text-center">
+                                    <h5 class="card-title">
+                                        <span class="text-success">@CalculateTodaysNutrients().totalSodium</span>
+                                    </h5>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Carbohydrates Intake Card -->
+                        <div class="col">
+                            <div class="card">
+                                <div class="card-header text-center bg-success text-white">
+                                    Carbs <strong>(g)</strong>
+                                </div>
+                                <div class="card-body text-center">
+                                    <h5 class="card-title">
+                                        <span class="text-success">@CalculateTodaysNutrients().totalCarbohydrates</span>
+                                    </h5>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Fiber Intake Card -->
+                        <div class="col">
+                            <div class="card">
+                                <div class="card-header text-center bg-success text-white">
+                                    Fiber <strong>(g)</strong>
+                                </div>
+                                <div class="card-body text-center">
+                                    <h5 class="card-title">
+                                        <span class="text-success">@CalculateTodaysNutrients().totalFiber</span>
+                                    </h5>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sugar Intake Card -->
+                        <div class="col">
+                            <div class="card">
+                                <div class="card-header text-center bg-success text-white">
+                                    Sugar <strong>(g)</strong>
+                                </div>
+                                <div class="card-body text-center">
+                                    <h5 class="card-title">
+                                        <span class="text-success">@CalculateTodaysNutrients().totalSugars</span>
+                                    </h5>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sugar Intake Card -->
+                        <div class="col">
+                            <div class="card">
+                                <div class="card-header text-center bg-success text-white">
+                                    Protein <strong>(g)</strong>
+                                </div>
+                                <div class="card-body text-center">
+                                    <h5 class="card-title">
+                                        <span class="text-success">@CalculateTodaysNutrients().totalProtein</span>
+                                    </h5>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Display Logs -->
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered mt-4">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th scope="col">Date</th>
+                                <th scope="col">Food Name</th>
+                                <th scope="col">Grams</th>
+                                <th scope="col">Calories <strong>(kcal)</strong></th>
+                                <th scope="col">Fat <strong>(g)</strong></th>
+                                <th scope="col">Sodium <strong>(mg)</strong></th>
+                                <th scope="col">Carbohydrates <strong>(g)</strong></th>
+                                <th scope="col">Fiber <strong>(g)</strong></th>
+                                <th scope="col">Sugars <strong>(g)</strong></th>
+                                <th scope="col">Protein <strong>(g)</strong></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var entry in logs)
+                            {
+                                <tr>
+                                    <td>@entry.Date.ToString("yyyy-MM-dd HH:mm")</td>
+                                    <td>@entry.FoodName</td>
+                                    <td>@entry.Grams</td>
+                                    <td>@entry.Calories</td>
+                                    <td>@entry.Fat</td>
+                                    <td>@entry.Sodium</td>
+                                    <td>@entry.Carbohydrates</td>
+                                    <td>@entry.Fiber</td>
+                                    <td>@entry.Sugars</td>
+                                    <td>@entry.Protein</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- CALORIE INTAKE ENTRY INPUT -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h4 class="card-title">Add New Entry</h4>
+
+                        <div class="form-row">
+                            <div class="mb-3">
+                                <input type="date" @bind="newEntry.Date" class="form-control" required />
+                            </div>
+                            <div class="mb-3">
+                                <select @bind="newEntry.FoodName" class="form-select">
+                                    @foreach (var food in foodItems)
+                                    {
+                                        <option value="@food.Name">@food.Name</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="grams" class="form-label">Grams:</label>
+                                <input type="text" @bind="newEntry.Grams" class="form-control" maxlength="5" required />
+                            </div>
+                        </div>
+
+                        <button style="margin-top:10px;" class="btn btn-primary" @onclick="AddLog">Add Log</button>
+                    </div>
+                </div>
+
+                <!-- Add New Food -->
+                <div class="card mb-4 mx-auto">
+                    <div class="card-body">
+                        <h4 class="card-title">Add New Food</h4>
+
+                        <div class="form-row">
+                            <div class="mb-3">
+                                <label for="foodname">Food Name</label>
+                                <input type="text" id="foodname" @bind="foodname" class="form-control" required />
+                            </div>
+                            <div class="mb-3">
+                                <label for="foodcalories">Calories (per 100g)</label>
+                                <input type="text" id="foodcalories" @bind="foodcalories" class="form-control" required />
+                            </div>
+                            <div class="mb-3">
+                                <label for="foodcalories">Fats (per 100g)</label>
+                                <input type="text" id="foodfats" @bind="foodfats" class="form-control" required />
+                            </div>
+                            <div class="mb-3">
+                                <label for="foodsodium">Sodium (per 100g)</label>
+                                <input type="text" id="foodsodium" @bind="foodsodium" class="form-control" required />
+                            </div>
+                            <div class="mb-3">
+                                <label for="foodcarbohydrates">Carbohydrates (per 100g)</label>
+                                <input type="text" id="foodcarbohydrates" @bind="foodcarbohydrates" class="form-control" required />
+                            </div>
+                            <div class="mb-3">
+                                <label for="foodfiber">Fiber (per 100g)</label>
+                                <input type="text" id="foodfiber" @bind="foodfiber" class="form-control" required />
+                            </div>
+                            <div class="mb-3">
+                                <label for="foodsugars">Sugars (per 100g)</label>
+                                <input type="text" id="foodsugars" @bind="foodsugars" class="form-control" required />
+                            </div>
+                            <div class="mb-3">
+                                <label for="foodprotein">Protein (per 100g)</label>
+                                <input type="text" id="foodprotein" @bind="foodprotein" class="form-control" required />
+                            </div>
+                        </div>
+
+                        <button style="margin-top:10px;" @onclick="AddFoodItem" class="btn btn-primary">Save Food</button>
+                    </div>
+                </div>
+            }
+            else if (userRegistred == "error")
+            {
+                <div class="alert alert-danger" role="alert">
+                    User not found. Please check the entered name.
+                    <button @onclick="GoToLogin" class="btn btn-secondary">Back To Login</button>
+                </div>
+            }
+            else
+            {
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Register</h5>
+                        <div class="mb-3">
+                            <input type="text" placeholder="Enter Name" @bind="Name" class="form-control" />
+                        </div>
+                        <div class="mb-3">
+                            <select id="gender" @bind="Gender" class="form-select">
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                            </select>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col">
+                                <label>Age (years)</label>
+                                <input type="number" @bind="Age" class="form-control" />
+                            </div>
+                            <div class="col">
+                                <label>Height (cm)</label>
+                                <input type="number" @bind="Height" class="form-control" />
+                            </div>
+                            <div class="col">
+                                <label>Weight (kg)</label>
+                                <input type="number" @bind="Weight" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <select id="amr" @bind="SelectedAmr" class="form-select">
+                                <option value="1.2">Sedentary (None)</option>
+                                <option value="1.375">Light Activity (Low)</option>
+                                <option value="1.55">Moderate Activity (Medium)</option>
+                                <option value="1.725">Active (Active)</option>
+                                <option value="1.9">Very Active (Very Active)</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <select id="goal" @bind="SelectedGoal" class="form-select">
+                                <option value="loseWeight">Loss</option>
+                                <option value="gainWeight">Gain</option>
+                                <option value="maintainWeight">Maintain</option>
+                            </select>
+                        </div>
+                        <button @onclick="Register" class="btn btn-primary">Register</button>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    private string userRegistred = "no";
+    private string loggedInUsername;
+    private int caloriesNeeded;
+    private string Name;
+    private string Gender = "Male";
+    private int Age;
+    private int Height;
+    private int Weight;
+    private string SelectedAmr = "1.2";
+    private string SelectedGoal = "maintainWeight";
+    private User user;
+    private List<Log> logs = new List<Log>();
+    private Log newEntry = new Log { Date = DateTime.Now, FoodName = "Steak" };
+    private List<Food> foodItems = new List<Food>(); // Initialize foodItems list
+
+    public string foodname;
+    public double foodcalories;
+    public double foodfats;
+    public double foodsodium;
+    public double foodcarbohydrates;
+    public double foodfiber;
+    public double foodsugars;
+    public double foodprotein;
+
+    protected override async Task OnInitializedAsync()
     {
-        private readonly string con = "Data Source=calorific.db";
+        foodItems = await foodService.GetFoodItems();
 
-        public async Task InitializeDatabase()
+    }
+
+    private async void AddLog()
+    {
+        // get the food item details from the database
+        var selectedFood = foodItems.FirstOrDefault(food => food.Name == newEntry.FoodName);
+        if (selectedFood != null)
         {
-            using (var connection = new SqliteConnection(con))
+            // Calculate calories and other nutrients based on grams
+            double grams = newEntry.Grams;
+            newEntry.Calories = (int)(selectedFood.Calories * (grams / 100.0));
+            newEntry.Fat = (int)(selectedFood.Fat * (grams / 100.0));
+            newEntry.Sodium = (int)(selectedFood.Sodium * (grams / 100.0));
+            newEntry.Carbohydrates = (int)(selectedFood.Carbohydrates * (grams / 100.0));
+            newEntry.Fiber = (int)(selectedFood.Fiber * (grams / 100.0));
+            newEntry.Sugars = (int)(selectedFood.Sugars * (grams / 100.0));
+            newEntry.Protein = (int)(selectedFood.Protein * (grams / 100.0));
+        }
+
+        // Add the log entry to the database
+        await foodService.AddLog(newEntry, loggedInUsername);
+        // Refresh the logs list
+        logs = await foodService.GetLogsForUser(loggedInUsername);
+        // Reset the newEntry
+        newEntry = new Log { Date = DateTime.Now, FoodName = "Steak" };
+    }
+
+    private (int totalCalories, int totalFat, int totalSodium, int totalCarbohydrates, int totalFiber, int totalSugars, int totalProtein) CalculateTodaysNutrients()
+    {
+        // Get the logs for the current user and current day
+        var todayLogs = logs.Where(log => log.Date.Date == DateTime.Now);
+        // Calculate total nutrients
+        int totalCalories = (int)todayLogs.Sum(log => log.Calories);
+        int totalFat = (int)todayLogs.Sum(log => log.Fat);
+        int totalSodium = (int)todayLogs.Sum(log => log.Sodium);
+        int totalCarbohydrates = (int)todayLogs.Sum(log => log.Carbohydrates);
+        int totalFiber = (int)todayLogs.Sum(log => log.Fiber);
+        int totalSugars = (int)todayLogs.Sum(log => log.Sugars);
+        int totalProtein = (int)todayLogs.Sum(log => log.Protein);
+        return (totalCalories, totalFat, totalSodium, totalCarbohydrates, totalFiber, totalSugars, totalProtein);
+    }
+
+    private async void FindUser()
+    {
+        user = await foodService.GetUser(Name);
+        if (user != null)
+        {
+            userRegistred = "yes";
+            loggedInUsername = Name;
+            Calculate();
+            logs = await foodService.GetLogsForUser(loggedInUsername);
+        }
+        else
+        {
+            userRegistred = "error";
+        }
+    }
+
+    private void Calculate()
+    {
+        if (user != null)
+        {
+            double bmr;
+
+            if (user.Gender == "Male")
             {
-                await connection.OpenAsync();
-
-                var new_tables = connection.CreateCommand();
-                new_tables.CommandText = @"
-                    CREATE TABLE IF NOT EXISTS FoodItems (
-                        Name TEXT PRIMARY KEY,
-                        Calories REAL,
-                        Fat REAL,
-                        Sodium REAL,
-                        Carbohydrates REAL,
-                        Fiber REAL,
-                        Sugars REAL,
-                        Protein REAL
-                    );
-
-                    CREATE TABLE IF NOT EXISTS Users (
-                        Name TEXT PRIMARY KEY,
-                        Gender TEXT,
-                        Age INTEGER,
-                        Height REAL,
-                        Weight REAL,
-                        SelectedAmr TEXT,
-                        SelectedGoal TEXT
-                    );
-
-                    CREATE TABLE IF NOT EXISTS Logs (
-                        Username TEXT,
-                        Date TEXT,
-                        FoodName TEXT,
-                        Grams INTEGER,
-                        Calories REAL,
-                        Fat REAL,
-                        Sodium REAL,
-                        Carbohydrates REAL,
-                        Fiber REAL,
-                        Sugars REAL,
-                        Protein REAL
-                    );
-                ";
-
-                await new_tables.ExecuteNonQueryAsync();
+                bmr = 66.47 + (13.75 * user.Weight) + (5.003 * user.Height) - (6.755 * user.Age); // BMR for male
             }
-        }
-
-        public async Task<List<Food>> GetFoodItems()
-        {
-            var foodItems = new List<Food>();
-
-            using (var connection = new SqliteConnection(con))
+            else
             {
-                await connection.OpenAsync();
-
-                var exec = connection.CreateCommand();
-                exec.CommandText = "SELECT * FROM FoodItems";
-
-                using (var reader = await exec.ExecuteReaderAsync())
-                {
-                    while (await reader.ReadAsync())
-                    {
-                        foodItems.Add(ReadFoodItem(reader));
-                    }
-                }
-            }
-
-            return foodItems;
-        }
-
-        private Food ReadFoodItem(SqliteDataReader reader)
-        {
-            return new Food
-            {
-                Name = reader.GetString(0),
-                Calories = reader.GetDouble(1),
-                Fat = reader.GetDouble(2),
-                Sodium = reader.GetDouble(3),
-                Carbohydrates = reader.GetDouble(4),
-                Fiber = reader.GetDouble(5),
-                Sugars = reader.GetDouble(6),
-                Protein = reader.GetDouble(7)
-            };
-        }
-
-        public async Task AddFoodItem(string name, double calories, double fat, double sodium, double carbohydrates, double fiber, double sugars, double protein)
-        {
-            using (var connection = new SqliteConnection(con))
-            {
-                await connection.OpenAsync();
-
-                var exec = connection.CreateCommand();
-                exec.CommandText = "INSERT INTO FoodItems (Name, Calories, Fat, Sodium, Carbohydrates, Fiber, Sugars, Protein) VALUES (@Name, @Calories, @Fat, @Sodium, @Carbohydrates, @Fiber, @Sugars, @Protein)";
-                exec.Parameters.AddWithValue("@Name", name);
-                exec.Parameters.AddWithValue("@Calories", calories);
-                exec.Parameters.AddWithValue("@Fat", fat);
-                exec.Parameters.AddWithValue("@Sodium", sodium);
-                exec.Parameters.AddWithValue("@Carbohydrates", carbohydrates);
-                exec.Parameters.AddWithValue("@Fiber", fiber);
-                exec.Parameters.AddWithValue("@Sugars", sugars);
-                exec.Parameters.AddWithValue("@Protein", protein);
-
-                await exec.ExecuteNonQueryAsync();
-            }
-        }
-
-        public async Task AddUser(string name, string gender, int age, double height, double weight, string selectedAmr, string selectedGoal)
-        {
-            using (var connection = new SqliteConnection(con))
-            {
-                await connection.OpenAsync();
-
-                var exec = connection.CreateCommand();
-                exec.CommandText = "INSERT INTO Users (Name, Gender, Age, Height, Weight, SelectedAmr, SelectedGoal) VALUES (@Name, @Gender, @Age, @Height, @Weight, @SelectedAmr, @SelectedGoal)";
-                exec.Parameters.AddWithValue("@Name", name);
-                exec.Parameters.AddWithValue("@Gender", gender);
-                exec.Parameters.AddWithValue("@Age", age);
-                exec.Parameters.AddWithValue("@Height", height);
-                exec.Parameters.AddWithValue("@Weight", weight);
-                exec.Parameters.AddWithValue("@SelectedAmr", selectedAmr);
-                exec.Parameters.AddWithValue("@SelectedGoal", selectedGoal);
-
-                await exec.ExecuteNonQueryAsync();
-            }
-        }
-
-        public async Task<User> GetUser(string name)
-        {
-            using (var connection = new SqliteConnection(con))
-            {
-                await connection.OpenAsync();
-
-                var exec = connection.CreateCommand();
-                exec.CommandText = "SELECT * FROM Users WHERE Name = @Name";
-                exec.Parameters.AddWithValue("@Name", name);
-
-                using (var reader = await exec.ExecuteReaderAsync())
-                {
-                    if (await reader.ReadAsync())
-                    {
-                        return new User
-                        {
-                            Name = reader.GetString(0),
-                            Gender = reader.GetString(1),
-                            Age = reader.GetInt32(2),
-                            Height = reader.GetDouble(3),
-                            Weight = reader.GetDouble(4),
-                            SelectedAmr = reader.GetString(5),
-                            SelectedGoal = reader.GetString(6)
-                        };
-                    }
-                }
+                bmr = 655.1 + (9.563 * user.Weight) + (1.850 * user.Height) - (4.676 * user.Age); // BMR for female
             }
 
-            return null;
-        }
+            caloriesNeeded = (int)(bmr * double.Parse(user.SelectedAmr) - 50); // BMR * AMR - 50
 
-        public async Task AddLog(Log log, string username)
-        {
-                using (var connection = new SqliteConnection(con))
-                {
-                    await connection.OpenAsync();
-
-                    var exec = connection.CreateCommand();
-                    exec.CommandText = @"INSERT INTO Logs (Username, Date, FoodName, Grams, Calories, Fat, Sodium, Carbohydrates, Fiber, Sugars, Protein)
-                                 VALUES (@Username, @Date, @FoodName, @Grams, @Calories, @Fat, @Sodium, @Carbohydrates, @Fiber, @Sugars, @Protein)";
-                    exec.Parameters.AddWithValue("@Username", username);
-                    exec.Parameters.AddWithValue("@Date", log.Date);
-                    exec.Parameters.AddWithValue("@FoodName", log.FoodName);
-                    exec.Parameters.AddWithValue("@Grams", log.Grams);
-                    exec.Parameters.AddWithValue("@Calories", log.Calories);
-                    exec.Parameters.AddWithValue("@Fat", log.Fat);
-                    exec.Parameters.AddWithValue("@Sodium", log.Sodium);
-                    exec.Parameters.AddWithValue("@Carbohydrates", log.Carbohydrates);
-                    exec.Parameters.AddWithValue("@Fiber", log.Fiber);
-                    exec.Parameters.AddWithValue("@Sugars", log.Sugars);
-                    exec.Parameters.AddWithValue("@Protein", log.Protein);
-
-                    await exec.ExecuteNonQueryAsync();
-                }
-        }
-
-        public async Task<List<Log>> GetLogsForUser(string userName)
-        {
-            var logs = new List<Log>();
-
-            using var connection = new SqliteConnection(con);
-            await connection.OpenAsync();
-
-            var exec = connection.CreateCommand();
-            exec.CommandText = "SELECT * FROM Logs WHERE Username = @Username";
-            exec.Parameters.AddWithValue("@Username", userName);
-
-            var reader = await exec.ExecuteReaderAsync();
-
-            while (await reader.ReadAsync())
+            if (user.SelectedGoal == "loseWeight")
             {
-                logs.Add(ReadLogItems(reader));
+                caloriesNeeded -= 250; // Lose weight
             }
-
-            return logs;
-        }
-        private Log ReadLogItems(SqliteDataReader reader)
-        {
-            return new Log
+            else if (user.SelectedGoal == "gainWeight")
             {
-                Date = reader.GetDateTime(1),
-                FoodName = reader.GetString(2),
-                Grams = reader.GetInt32(3),
-                Calories = reader.GetDouble(4),
-                Fat = reader.GetDouble(5),
-                Sodium = reader.GetDouble(6),
-                Carbohydrates = reader.GetDouble(7),
-                Fiber = reader.GetDouble(8),
-                Sugars = reader.GetDouble(9),
-                Protein = reader.GetDouble(10)
-            };
+                caloriesNeeded += 250; // Gain weight
+            }
         }
+    }
+
+    private void GoToRegister()
+    {
+        userRegistred = "calculator";
+
+    }
+
+
+    private void GoToLogin()
+    {
+        userRegistred = "no";
+
+    }
+
+    private async void Register()
+    {
+        await foodService.AddUser(Name, Gender, Age, Height, Weight, SelectedAmr, SelectedGoal);
+        userRegistred = "yes";
+        FindUser();
+    }
+
+    private async void AddFoodItem()
+    {
+        await foodService.AddFoodItem(foodname, foodcalories, foodfats, foodsodium, foodcarbohydrates, foodfiber, foodsugars, foodprotein);
+        foodname = "Steak";
+        foodcalories = 0;
+        foodfats = 0;
+        foodsodium = 0;
+        foodcarbohydrates = 0;
+        foodfiber= 0;
+        foodsugars = 0;
+        foodprotein = 0;
+        foodItems = await foodService.GetFoodItems();
     }
 }
