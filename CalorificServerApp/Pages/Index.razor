@@ -11,7 +11,7 @@
                     <div class="card-body">
                         <h5 class="card-title">Login</h5>
                         <div class="mb-3">
-                            <input type="text" placeholder="Enter Name" @bind="Name" class="form-control" />
+                            <input type="text" placeholder="Enter Name" @bind="Name" class="form-control" required/>
                         </div>
                         <button @onclick="FindUser" class="btn btn-primary">Login</button>
                         <button @onclick="GoToRegister" class="btn btn-secondary">Register</button>
@@ -409,6 +409,12 @@
 
     private async void FindUser()
     {
+        if (string.IsNullOrEmpty(Name))
+        {
+            userRegistred = "error";
+            return;
+        }
+
         user = await foodService.GetUser(Name);
         if (user != null)
         {
