@@ -266,7 +266,7 @@
                             </div>
                         </div>
 
-                        <button style="margin-top:10px;" @onclick="AddFoodItem" class="btn btn-primary">Save Food</button>
+                        <button style="margin-top:10px;" @onclick="AddItem" class="btn btn-primary">Save Food</button>
                     </div>
                 </div>
             }
@@ -496,7 +496,7 @@
         }
     }
 
-    private async void AddFoodItem()
+    private async void AddItem()
     {
         await foodService.AddFoodItem(foodname, foodcalories, foodfats, foodsodium, foodcarbohydrates, foodfiber, foodsugars, foodprotein);
         foodname = "Steak";
