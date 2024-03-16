@@ -167,28 +167,30 @@ namespace CalorificServerApp.Data
 
         public async Task AddLog(Log log, string username)
         {
-                using (var connection = new SqliteConnection(con))
-                {
-                    await connection.OpenAsync();
+            using (var connection = new SqliteConnection(con))
+            {
+                await connection.OpenAsync();
 
-                    var exec = connection.CreateCommand();
-                    exec.CommandText = @"INSERT INTO Logs (Username, Date, FoodName, Grams, Calories, Fat, Sodium, Carbohydrates, Fiber, Sugars, Protein)
-                                 VALUES (@Username, @Date, @FoodName, @Grams, @Calories, @Fat, @Sodium, @Carbohydrates, @Fiber, @Sugars, @Protein)";
-                    exec.Parameters.AddWithValue("@Username", username);
-                    exec.Parameters.AddWithValue("@Date", log.Date);
-                    exec.Parameters.AddWithValue("@FoodName", log.FoodName);
-                    exec.Parameters.AddWithValue("@Grams", log.Grams);
-                    exec.Parameters.AddWithValue("@Calories", log.Calories);
-                    exec.Parameters.AddWithValue("@Fat", log.Fat);
-                    exec.Parameters.AddWithValue("@Sodium", log.Sodium);
-                    exec.Parameters.AddWithValue("@Carbohydrates", log.Carbohydrates);
-                    exec.Parameters.AddWithValue("@Fiber", log.Fiber);
-                    exec.Parameters.AddWithValue("@Sugars", log.Sugars);
-                    exec.Parameters.AddWithValue("@Protein", log.Protein);
+                var exec = connection.CreateCommand();
+                exec.CommandText = @"INSERT INTO Logs (Username, Date, Time, FoodName, Grams, Calories, Fat, Sodium, Carbohydrates, Fiber, Sugars, Protein)
+                             VALUES (@Username, @Date, @Time, @FoodName, @Grams, @Calories, @Fat, @Sodium, @Carbohydrates, @Fiber, @Sugars, @Protein)";
+                exec.Parameters.AddWithValue("@Username", username);
+                exec.Parameters.AddWithValue("@Date", log.Date);
+                exec.Parameters.AddWithValue("@Time", log.Time);
+                exec.Parameters.AddWithValue("@FoodName", log.FoodName);
+                exec.Parameters.AddWithValue("@Grams", log.Grams);
+                exec.Parameters.AddWithValue("@Calories", log.Calories);
+                exec.Parameters.AddWithValue("@Fat", log.Fat);
+                exec.Parameters.AddWithValue("@Sodium", log.Sodium);
+                exec.Parameters.AddWithValue("@Carbohydrates", log.Carbohydrates);
+                exec.Parameters.AddWithValue("@Fiber", log.Fiber);
+                exec.Parameters.AddWithValue("@Sugars", log.Sugars);
+                exec.Parameters.AddWithValue("@Protein", log.Protein);
 
-                    await exec.ExecuteNonQueryAsync();
-                }
+                await exec.ExecuteNonQueryAsync();
+            }
         }
+
 
         public async Task<List<Log>> GetLogsForUser(string userName)
         {
