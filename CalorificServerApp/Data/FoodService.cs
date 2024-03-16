@@ -65,18 +65,18 @@ namespace CalorificServerApp.Data
                 return;
             }
             // Add food items to the database
-            await AddFoodItemAsync("Steak", 250, 26, 65, 0, 0, 0, 26);
-            await AddFoodItemAsync("Chicken", 165, 3.6, 74, 0, 0, 0, 31);
-            await AddFoodItemAsync("Cheeseburger", 250, 12, 300, 33, 0, 6, 15);
-            await AddFoodItemAsync("Rice", 130, 0.3, 0, 28, 0, 0, 2.7);
-            await AddFoodItemAsync("Pizza", 285, 12, 683, 35, 2.3, 3.2, 12);
-            await AddFoodItemAsync("Fries", 365, 17, 210, 63, 6, 0.6, 3.4);
-            await AddFoodItemAsync("Bread", 265, 2.9, 498, 49, 3, 3, 8);
-            await AddFoodItemAsync("Pasta", 131, 1.1, 4.5, 25, 1.3, 1.4, 5.2);
-            await AddFoodItemAsync("Cheese", 402, 33, 621, 2.2, 0, 0, 25);
+            await AddFoodItem("Steak", 250, 26, 65, 0, 0, 0, 26);
+            await AddFoodItem("Chicken", 165, 3.6, 74, 0, 0, 0, 31);
+            await AddFoodItem("Cheeseburger", 250, 12, 300, 33, 0, 6, 15);
+            await AddFoodItem("Rice", 130, 0.3, 0, 28, 0, 0, 2.7);
+            await AddFoodItem("Pizza", 285, 12, 683, 35, 2.3, 3.2, 12);
+            await AddFoodItem("Fries", 365, 17, 210, 63, 6, 0.6, 3.4);
+            await AddFoodItem("Bread", 265, 2.9, 498, 49, 3, 3, 8);
+            await AddFoodItem("Pasta", 131, 1.1, 4.5, 25, 1.3, 1.4, 5.2);
+            await AddFoodItem("Cheese", 402, 33, 621, 2.2, 0, 0, 25);
         }
 
-        public async Task<List<Food>> GetFoodItemsAsync()
+        public async Task<List<Food>> GetFoodItems()
         {
             var foodItems = new List<Food>();
 
@@ -114,7 +114,7 @@ namespace CalorificServerApp.Data
             };
         }
 
-        public async Task AddFoodItemAsync(string name, double calories, double fat, double sodium, double carbohydrates, double fiber, double sugars, double protein)
+        public async Task AddFoodItem(string name, double calories, double fat, double sodium, double carbohydrates, double fiber, double sugars, double protein)
         {
             using (var connection = new SqliteConnection(_connectionString))
             {
@@ -135,7 +135,7 @@ namespace CalorificServerApp.Data
             }
         }
 
-        public async Task AddUserAsync(string name, string gender, int age, double height, double weight, string selectedAmr, string selectedGoal)
+        public async Task AddUser(string name, string gender, int age, double height, double weight, string selectedAmr, string selectedGoal)
         {
             using (var connection = new SqliteConnection(_connectionString))
             {
@@ -155,7 +155,7 @@ namespace CalorificServerApp.Data
             }
         }
 
-        public async Task<User> GetUserAsync(string name)
+        public async Task<User> GetUser(string name)
         {
             using (var connection = new SqliteConnection(_connectionString))
             {
@@ -186,7 +186,7 @@ namespace CalorificServerApp.Data
             return null;
         }
 
-        public async Task AddLogAsync(Log log, string username)
+        public async Task AddLog(Log log, string username)
         {
                 using (var connection = new SqliteConnection(_connectionString))
                 {
@@ -211,7 +211,7 @@ namespace CalorificServerApp.Data
                 }
         }
 
-        public async Task<List<Log>> GetLogsForUserAsync(string userName)
+        public async Task<List<Log>> GetLogsForUser(string userName)
         {
             var logs = new List<Log>();
 
