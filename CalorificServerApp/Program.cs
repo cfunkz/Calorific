@@ -12,8 +12,7 @@ builder.Services.AddSingleton<FoodService>();
 var app = builder.Build();
 
 var foodService = app.Services.GetRequiredService<FoodService>();
-await foodService.InitializeDatabaseAsync(); //initialize db
-await foodService.PrepopulateFoodItemsAsync(); // Populate with start items
+await foodService.InitializeDatabase(); //initialize db
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
