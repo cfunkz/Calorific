@@ -284,6 +284,13 @@
                     <button @onclick="GoToRegister" class="btn btn-secondary">Back To Register</button>
                 </div>
             }
+            else if (userRegistred == "error3")
+            {
+                <div class="alert alert-danger d-flex justify-content-between align-items-center" role="alert">
+                    Please enter valid details.
+                    <button @onclick="GoToRegister" class="btn btn-secondary">Back To Register</button>
+                </div>
+            }
             else
             {
                 <div class="card">
@@ -475,12 +482,14 @@
         var existingUser = await foodService.GetUser(Name);
         if (existingUser != null)
         {
-            // User already exists in the database
             userRegistred = "error2";
+        }
+        else if (Age <= 0 || Height <= 0 || Weight <= 0)
+        {
+            userRegistred = "error3";
         }
         else
         {
-            // User doesn't exist, proceed with registration
             await foodService.AddUser(Name, Gender, Age, Height, Weight, SelectedAmr, SelectedGoal);
             userRegistred = "yes";
             FindUser();
