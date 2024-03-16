@@ -271,9 +271,16 @@
             }
             else if (userRegistred == "error")
             {
-                <div class="alert alert-danger" role="alert">
+                <div class="alert alert-danger d-flex justify-content-between align-items-center" role="alert">
                     User not found. Please check the entered name.
                     <button @onclick="GoToLogin" class="btn btn-secondary">Back To Login</button>
+                </div>
+            }
+            else if (userRegistred == "error2")
+            {
+                <div class="alert alert-danger d-flex justify-content-between align-items-center" role="alert">
+                    User already exists. Please check the entered name.
+                    <button @onclick="GoToRegister" class="btn btn-secondary">Back To Register</button>
                 </div>
             }
             else
@@ -459,9 +466,19 @@
 
     private async void Register()
     {
-        await foodService.AddUser(Name, Gender, Age, Height, Weight, SelectedAmr, SelectedGoal);
-        userRegistred = "yes";
-        FindUser();
+        var existingUser = await foodService.GetUser(Name);
+        if (existingUser != null)
+        {
+            // User already exists in the database
+            userRegistred = "error2";
+        }
+        else
+        {
+            // User doesn't exist, proceed with registration
+            await foodService.AddUser(Name, Gender, Age, Height, Weight, SelectedAmr, SelectedGoal);
+            userRegistred = "yes";
+            FindUser();
+        }
     }
 
     private async void AddFoodItem()
