@@ -6,7 +6,7 @@ namespace CalorificServerApp.Data
     {
         private readonly string _connectionString = "Data Source=calorific.db";
 
-        public async Task InitializeDatabaseAsync()
+        public async Task InitializeDatabase()
         {
             using (var connection = new SqliteConnection(_connectionString))
             {
@@ -52,28 +52,6 @@ namespace CalorificServerApp.Data
 
                 await new_tables.ExecuteNonQueryAsync();
             }
-        }
-
-        public async Task PrepopulateFoodItemsAsync()
-        {
-            // Get existing food items from the database
-            var existing = await GetFoodItemsAsync();
-
-            // Check if food items already exist in the database
-            if (existing.Count > 0)
-            {
-                return;
-            }
-            // Add food items to the database
-            await AddFoodItem("Steak", 250, 26, 65, 0, 0, 0, 26);
-            await AddFoodItem("Chicken", 165, 3.6, 74, 0, 0, 0, 31);
-            await AddFoodItem("Cheeseburger", 250, 12, 300, 33, 0, 6, 15);
-            await AddFoodItem("Rice", 130, 0.3, 0, 28, 0, 0, 2.7);
-            await AddFoodItem("Pizza", 285, 12, 683, 35, 2.3, 3.2, 12);
-            await AddFoodItem("Fries", 365, 17, 210, 63, 6, 0.6, 3.4);
-            await AddFoodItem("Bread", 265, 2.9, 498, 49, 3, 3, 8);
-            await AddFoodItem("Pasta", 131, 1.1, 4.5, 25, 1.3, 1.4, 5.2);
-            await AddFoodItem("Cheese", 402, 33, 621, 2.2, 0, 0, 25);
         }
 
         public async Task<List<Food>> GetFoodItems()
