@@ -208,6 +208,7 @@
                                 <input type="time" @bind="newEntry.Time" class="form-control" required />
                             </div>
                             <div class="mb-3">
+                                <label class="form-label">Food</label>
                                 <select @bind="newEntry.FoodName" class="form-select">
                                     @foreach (var food in foodItems)
                                     {
@@ -216,7 +217,7 @@
                                 </select>
                             </div>
                             <div class="mb-3">
-                                <label for="grams" class="form-label">Grams:</label>
+                                <label for="grams" class="form-label">Grams</label>
                                 <input type="text" @bind="newEntry.Grams" class="form-control" maxlength="5" required />
                             </div>
                         </div>
@@ -337,9 +338,9 @@
 
 @code {
     private string userRegistred = "no";
-    private string loggedInUsername;
+    private string loggedInUsername = "";
     private int caloriesNeeded;
-    private string Name;
+    private string Name = "";
     private DateTime Date = DateTime.Now;
     private string FoodName = "Steak";
     private string Gender = "Male";
@@ -353,7 +354,7 @@
     private Log newEntry = new Log { Date = DateTime.Now, FoodName = "Steak" };
     private List<Food> foodItems = new List<Food>(); // Initialize foodItems list
 
-    public string foodname;
+    public string foodname = "";
     public double foodcalories;
     public double foodfats;
     public double foodsodium;
@@ -371,7 +372,7 @@
     private async void AddLog()
     {
         // get the food item details from the database
-        var selectedFood = foodItems.FirstOrDefault(food => food.Name == newEntry.FoodName);
+        var selectedFood = foodItems.Find(food => food.Name == newEntry.FoodName);
         if (selectedFood != null)
         {
             // Calculate calories and other nutrients based on grams
@@ -385,7 +386,6 @@
             newEntry.Sugars = (int)(selectedFood.Sugars * (grams / 100.0));
             newEntry.Protein = (int)(selectedFood.Protein * (grams / 100.0));
         }
-
         // Add the log entry to the database
         await foodService.AddLog(newEntry, loggedInUsername);
         // Refresh the logs list
