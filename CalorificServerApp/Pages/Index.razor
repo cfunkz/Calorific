@@ -38,12 +38,13 @@
                                         <span class="text-success">@CalculateTodaysNutrients().totalCalories</span> / <span class="text-danger">@caloriesNeeded</span>
                                     </h5>
                                     <p class="card-text">Keep track of your calorie intake!</p>
-                                     @if (CalculateTodaysNutrients().totalCalories > caloriesNeeded)
-                                     {
+                                    @if (CalculateTodaysNutrients().totalCalories > caloriesNeeded)
+                                    {
+                                        var exceededBy = CalculateTodaysNutrients().totalCalories - caloriesNeeded;
                                         <div class="alert alert-danger" role="alert">
-                                            You've exceeded your daily calorie goal!
+                                            You've exceeded your daily calorie goal by @exceededBy calories!
                                         </div>
-                                     }
+                                    }
                                 </div>
                             </div>
                         </div>
