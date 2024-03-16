@@ -291,6 +291,13 @@
                     <button @onclick="GoToRegister" class="btn btn-secondary">Back To Register</button>
                 </div>
             }
+            else if (userRegistred == "error4")
+            {
+                <div class="alert alert-danger d-flex justify-content-between align-items-center" role="alert">
+                    Enter correct gram amount.
+                    <button @onclick="FindUser" class="btn btn-secondary">Back To Home</button>
+                </div>
+            }
             else
             {
                 <div class="card">
@@ -380,7 +387,7 @@
     {
         // get the food item details from the database
         var selectedFood = foodItems.Find(food => food.Name == newEntry.FoodName);
-        if (selectedFood != null)
+        if (selectedFood != null && newEntry.Grams > 0)
         {
             // Calculate calories and other nutrients based on grams
             double grams = newEntry.Grams;
@@ -392,6 +399,10 @@
             newEntry.Fiber = (int)(selectedFood.Fiber * (grams / 100.0));
             newEntry.Sugars = (int)(selectedFood.Sugars * (grams / 100.0));
             newEntry.Protein = (int)(selectedFood.Protein * (grams / 100.0));
+        }
+        else
+        {
+            userRegistred = "error4";
         }
         // Add the log entry to the database
         await foodService.AddLog(newEntry, loggedInUsername);
