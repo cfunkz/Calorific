@@ -98,18 +98,18 @@ namespace CalorificServerApp.Data
             {
                 await connection.OpenAsync();
 
-                var command = connection.CreateCommand();
-                command.CommandText = "INSERT INTO FoodItems (Name, Calories, Fat, Sodium, Carbohydrates, Fiber, Sugars, Protein) VALUES (@Name, @Calories, @Fat, @Sodium, @Carbohydrates, @Fiber, @Sugars, @Protein)";
-                command.Parameters.AddWithValue("@Name", name);
-                command.Parameters.AddWithValue("@Calories", calories);
-                command.Parameters.AddWithValue("@Fat", fat);
-                command.Parameters.AddWithValue("@Sodium", sodium);
-                command.Parameters.AddWithValue("@Carbohydrates", carbohydrates);
-                command.Parameters.AddWithValue("@Fiber", fiber);
-                command.Parameters.AddWithValue("@Sugars", sugars);
-                command.Parameters.AddWithValue("@Protein", protein);
+                var exec = connection.CreateCommand();
+                exec.CommandText = "INSERT INTO FoodItems (Name, Calories, Fat, Sodium, Carbohydrates, Fiber, Sugars, Protein) VALUES (@Name, @Calories, @Fat, @Sodium, @Carbohydrates, @Fiber, @Sugars, @Protein)";
+                exec.Parameters.AddWithValue("@Name", name);
+                exec.Parameters.AddWithValue("@Calories", calories);
+                exec.Parameters.AddWithValue("@Fat", fat);
+                exec.Parameters.AddWithValue("@Sodium", sodium);
+                exec.Parameters.AddWithValue("@Carbohydrates", carbohydrates);
+                exec.Parameters.AddWithValue("@Fiber", fiber);
+                exec.Parameters.AddWithValue("@Sugars", sugars);
+                exec.Parameters.AddWithValue("@Protein", protein);
 
-                await command.ExecuteNonQueryAsync();
+                await exec.ExecuteNonQueryAsync();
             }
         }
 
@@ -119,17 +119,17 @@ namespace CalorificServerApp.Data
             {
                 await connection.OpenAsync();
 
-                var command = connection.CreateCommand();
-                command.CommandText = "INSERT INTO Users (Name, Gender, Age, Height, Weight, SelectedAmr, SelectedGoal) VALUES (@Name, @Gender, @Age, @Height, @Weight, @SelectedAmr, @SelectedGoal)";
-                command.Parameters.AddWithValue("@Name", name);
-                command.Parameters.AddWithValue("@Gender", gender);
-                command.Parameters.AddWithValue("@Age", age);
-                command.Parameters.AddWithValue("@Height", height);
-                command.Parameters.AddWithValue("@Weight", weight);
-                command.Parameters.AddWithValue("@SelectedAmr", selectedAmr);
-                command.Parameters.AddWithValue("@SelectedGoal", selectedGoal);
+                var exec = connection.CreateCommand();
+                exec.CommandText = "INSERT INTO Users (Name, Gender, Age, Height, Weight, SelectedAmr, SelectedGoal) VALUES (@Name, @Gender, @Age, @Height, @Weight, @SelectedAmr, @SelectedGoal)";
+                exec.Parameters.AddWithValue("@Name", name);
+                exec.Parameters.AddWithValue("@Gender", gender);
+                exec.Parameters.AddWithValue("@Age", age);
+                exec.Parameters.AddWithValue("@Height", height);
+                exec.Parameters.AddWithValue("@Weight", weight);
+                exec.Parameters.AddWithValue("@SelectedAmr", selectedAmr);
+                exec.Parameters.AddWithValue("@SelectedGoal", selectedGoal);
 
-                await command.ExecuteNonQueryAsync();
+                await exec.ExecuteNonQueryAsync();
             }
         }
 
@@ -139,11 +139,11 @@ namespace CalorificServerApp.Data
             {
                 await connection.OpenAsync();
 
-                var command = connection.CreateCommand();
-                command.CommandText = "SELECT * FROM Users WHERE Name = @Name";
-                command.Parameters.AddWithValue("@Name", name);
+                var exec = connection.CreateCommand();
+                exec.CommandText = "SELECT * FROM Users WHERE Name = @Name";
+                exec.Parameters.AddWithValue("@Name", name);
 
-                using (var reader = await command.ExecuteReaderAsync())
+                using (var reader = await exec.ExecuteReaderAsync())
                 {
                     if (await reader.ReadAsync())
                     {
@@ -170,22 +170,22 @@ namespace CalorificServerApp.Data
                 {
                     await connection.OpenAsync();
 
-                    var command = connection.CreateCommand();
-                    command.CommandText = @"INSERT INTO Logs (Username, Date, FoodName, Grams, Calories, Fat, Sodium, Carbohydrates, Fiber, Sugars, Protein)
+                    var exec = connection.CreateCommand();
+                    exec.CommandText = @"INSERT INTO Logs (Username, Date, FoodName, Grams, Calories, Fat, Sodium, Carbohydrates, Fiber, Sugars, Protein)
                                  VALUES (@Username, @Date, @FoodName, @Grams, @Calories, @Fat, @Sodium, @Carbohydrates, @Fiber, @Sugars, @Protein)";
-                    command.Parameters.AddWithValue("@Username", username);
-                    command.Parameters.AddWithValue("@Date", log.Date);
-                    command.Parameters.AddWithValue("@FoodName", log.FoodName);
-                    command.Parameters.AddWithValue("@Grams", log.Grams);
-                    command.Parameters.AddWithValue("@Calories", log.Calories);
-                    command.Parameters.AddWithValue("@Fat", log.Fat);
-                    command.Parameters.AddWithValue("@Sodium", log.Sodium);
-                    command.Parameters.AddWithValue("@Carbohydrates", log.Carbohydrates);
-                    command.Parameters.AddWithValue("@Fiber", log.Fiber);
-                    command.Parameters.AddWithValue("@Sugars", log.Sugars);
-                    command.Parameters.AddWithValue("@Protein", log.Protein);
+                    exec.Parameters.AddWithValue("@Username", username);
+                    exec.Parameters.AddWithValue("@Date", log.Date);
+                    exec.Parameters.AddWithValue("@FoodName", log.FoodName);
+                    exec.Parameters.AddWithValue("@Grams", log.Grams);
+                    exec.Parameters.AddWithValue("@Calories", log.Calories);
+                    exec.Parameters.AddWithValue("@Fat", log.Fat);
+                    exec.Parameters.AddWithValue("@Sodium", log.Sodium);
+                    exec.Parameters.AddWithValue("@Carbohydrates", log.Carbohydrates);
+                    exec.Parameters.AddWithValue("@Fiber", log.Fiber);
+                    exec.Parameters.AddWithValue("@Sugars", log.Sugars);
+                    exec.Parameters.AddWithValue("@Protein", log.Protein);
 
-                    await command.ExecuteNonQueryAsync();
+                    await exec.ExecuteNonQueryAsync();
                 }
         }
 
@@ -196,11 +196,11 @@ namespace CalorificServerApp.Data
             using var connection = new SqliteConnection(con);
             await connection.OpenAsync();
 
-            var command = connection.CreateCommand();
-            command.CommandText = "SELECT * FROM Logs WHERE Username = @Username";
-            command.Parameters.AddWithValue("@Username", userName);
+            var exec = connection.CreateCommand();
+            exec.CommandText = "SELECT * FROM Logs WHERE Username = @Username";
+            exec.Parameters.AddWithValue("@Username", userName);
 
-            var reader = await command.ExecuteReaderAsync();
+            var reader = await exec.ExecuteReaderAsync();
 
             while (await reader.ReadAsync())
             {
