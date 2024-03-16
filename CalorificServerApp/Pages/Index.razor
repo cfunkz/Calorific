@@ -340,6 +340,8 @@
     private string loggedInUsername;
     private int caloriesNeeded;
     private string Name;
+    private DateTime Date = DateTime.Now;
+    private string FoodName = "Steak";
     private string Gender = "Male";
     private int Age;
     private int Height;
@@ -388,8 +390,6 @@
         await foodService.AddLog(newEntry, loggedInUsername);
         // Refresh the logs list
         logs = await foodService.GetLogsForUser(loggedInUsername);
-        // Reset the newEntry
-        newEntry = new Log { Date = DateTime.Now, FoodName = "Steak" };
     }
 
     private (int totalCalories, int totalFat, int totalSodium, int totalCarbohydrates, int totalFiber, int totalSugars, int totalProtein) CalculateTodaysNutrients()
