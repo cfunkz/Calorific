@@ -38,6 +38,7 @@ namespace CalorificServerApp.Data
                     CREATE TABLE IF NOT EXISTS Logs (
                         Username TEXT,
                         Date TEXT,
+                        Time DATETIME,
                         FoodName TEXT,
                         Grams INTEGER,
                         Calories REAL,
@@ -214,16 +215,29 @@ namespace CalorificServerApp.Data
             return new Log
             {
                 Date = reader.GetDateTime(1),
-                FoodName = reader.GetString(2),
-                Grams = reader.GetInt32(3),
-                Calories = reader.GetDouble(4),
-                Fat = reader.GetDouble(5),
-                Sodium = reader.GetDouble(6),
-                Carbohydrates = reader.GetDouble(7),
-                Fiber = reader.GetDouble(8),
-                Sugars = reader.GetDouble(9),
-                Protein = reader.GetDouble(10)
+                Time = reader.GetDateTime(2),
+                FoodName = reader.GetString(3),
+                Grams = reader.GetInt32(4),
+                Calories = reader.GetDouble(5),
+                Fat = reader.GetDouble(6),
+                Sodium = reader.GetDouble(7),
+                Carbohydrates = reader.GetDouble(8),
+                Fiber = reader.GetDouble(9),
+                Sugars = reader.GetDouble(10),
+                Protein = reader.GetDouble(11)
             };
+        }
+        public async Task PopulateFoodItems()
+        {
+            await AddFoodItem("Steak", 250, 26, 65, 0, 0, 0, 26);
+            await AddFoodItem("Chicken", 165, 3.6, 74, 0, 0, 0, 31);
+            await AddFoodItem("Cheeseburger", 250, 12, 300, 33, 0, 6, 15);
+            await AddFoodItem("Rice", 130, 0.3, 0, 28, 0, 0, 2.7);
+            await AddFoodItem("Pizza", 285, 12, 683, 35, 2.3, 3.2, 12);
+            await AddFoodItem("Fries", 365, 17, 210, 63, 6, 0.6, 3.4);
+            await AddFoodItem("Bread", 265, 2.9, 498, 49, 3, 3, 8);
+            await AddFoodItem("Pasta", 131, 1.1, 4.5, 25, 1.3, 1.4, 5.2);
+            await AddFoodItem("Cheese", 402, 33, 621, 2.2, 0, 0, 25);
         }
     }
 }
