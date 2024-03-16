@@ -31,7 +31,7 @@
                         <div class="col">
                             <div class="card">
                                 <div class="card-header text-center bg-primary text-white">
-                                    Calorie Goal
+                                    Calorie Goal <strong>(kcal)</strong>
                                 </div>
                                 <div class="card-body text-center">
                                     <h5 class="card-title">
@@ -170,7 +170,7 @@
                             @foreach (var entry in logs)
                             {
                                 <tr>
-                                    <td>@entry.Date.ToString("yyyy-MM-dd (HH:mm)")</td>
+                                    <td>@entry.Date.ToString("yyyy-MM-dd HH:mm")</td>
                                     <td>@entry.FoodName</td>
                                     <td>@entry.Grams</td>
                                     <td>@entry.Calories</td>
@@ -329,7 +329,7 @@
     private string SelectedGoal = "maintainWeight";
     private User user;
     private List<Log> logs = new List<Log>();
-    private Log newEntry = new Log { Date = DateTime.Today, FoodName = "Steak" };
+    private Log newEntry = new Log { Date = DateTime.Now, FoodName = "Steak" };
     private List<Food> foodItems = new List<Food>(); // Initialize foodItems list
 
     public string foodname;
@@ -369,13 +369,13 @@
         // Refresh the logs list
         logs = await foodService.GetLogsForUser(loggedInUsername);
         // Reset the newEntry
-        newEntry = new Log { Date = DateTime.Today, FoodName = "Steak" };
+        newEntry = new Log { Date = DateTime.Now, FoodName = "Steak" };
     }
 
     public (int totalCalories, int totalFat, int totalSodium, int totalCarbohydrates, int totalFiber, int totalSugars, int totalProtein) CalculateTodaysNutrients()
     {
         // Get the logs for the current user and current day
-        var todayLogs = logs.Where(log => log.Date.Date == DateTime.Now.Date);
+        var todayLogs = logs.Where(log => log.Date.Date == DateTime.Now);
         // Calculate total nutrients
         int totalCalories = (int)todayLogs.Sum(log => log.Calories);
         int totalFat = (int)todayLogs.Sum(log => log.Fat);
