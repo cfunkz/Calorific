@@ -38,6 +38,12 @@
                                         <span class="text-success">@CalculateTodaysNutrients().totalCalories</span> / <span class="text-danger">@caloriesNeeded</span>
                                     </h5>
                                     <p class="card-text">Keep track of your calorie intake!</p>
+                                     @if (CalculateTodaysNutrients().totalCalories > caloriesNeeded)
+                                     {
+                                        <div class="alert alert-danger" role="alert">
+                                            You've exceeded your daily calorie goal!
+                                        </div>
+                                     }
                                 </div>
                             </div>
                         </div>
@@ -359,8 +365,8 @@
         if (selectedFood != null)
         {
             // Calculate calories and other nutrients based on grams
-            newEntry.Date = newEntry.Date.Date + newEntry.Time.TimeOfDay;
             double grams = newEntry.Grams;
+            newEntry.Date = newEntry.Date.Date + newEntry.Time.TimeOfDay;
             newEntry.Calories = (int)(selectedFood.Calories * (grams / 100.0));
             newEntry.Fat = (int)(selectedFood.Fat * (grams / 100.0));
             newEntry.Sodium = (int)(selectedFood.Sodium * (grams / 100.0));
@@ -381,7 +387,7 @@
     private (int totalCalories, int totalFat, int totalSodium, int totalCarbohydrates, int totalFiber, int totalSugars, int totalProtein) CalculateTodaysNutrients()
     {
         // Get the logs for the current user and current day
-        var todayLogs = logs.Where(log => log.Date.Date == DateTime.Now);
+        var todayLogs = logs.Where(log => log.Date.Date == DateTime.Today);
         // Calculate total nutrients
         int totalCalories = (int)todayLogs.Sum(log => log.Calories);
         int totalFat = (int)todayLogs.Sum(log => log.Fat);
