@@ -359,7 +359,7 @@
         if (selectedFood != null)
         {
             // Calculate calories and other nutrients based on grams
-            DateTime time = newEntry.Time;
+            newEntry.Date = newEntry.Date.Date + newEntry.Time.TimeOfDay;
             double grams = newEntry.Grams;
             newEntry.Calories = (int)(selectedFood.Calories * (grams / 100.0));
             newEntry.Fat = (int)(selectedFood.Fat * (grams / 100.0));
