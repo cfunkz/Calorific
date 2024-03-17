@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CalorificServerApp.Data
 {
-    public class AppDatabase : DbContext // Define a class named 'AppDatabase' that inherits from DbContext.
+    public class AppDatabase : DbContext // Define a class named 'AppDatabase' that inherits from DbContext
     {
         public DbSet<Food> FoodItems { get; set; } // Represents table for Food items
         public DbSet<User> Users { get; set; } // Represents table for Users
