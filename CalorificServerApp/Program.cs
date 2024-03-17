@@ -8,6 +8,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
+//Add Database class and FoodService class
+builder.Services.AddDbContext<AppDatabase>();
 builder.Services.AddScoped<FoodService>();
 var app = builder.Build();
 
@@ -27,5 +29,21 @@ app.UseRouting();
 
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var dbContext = services.GetRequiredService<AppDatabase>();
+    var foodService = services.GetRequiredService<FoodService>();
+
+    // Ensure database is created
+    dbContext.Database.EnsureCreated();
+
+    // Populate food items if the table is empty
+    if (!dbContext.FoodItems.Any())
+    {
+        await foodService.PopulateFoodItems();
+    }
+}
 
 app.Run();
