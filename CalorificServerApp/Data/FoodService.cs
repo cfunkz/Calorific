@@ -1,248 +1,128 @@
-using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore;
 
 namespace CalorificServerApp.Data
 {
-    public class FoodService
+    public class AppDatabase : DbContext
     {
-        private readonly string con = "Data Source=calorific.db";
-        
-        public async Task<List<Food>> GetFoodItems()
+        public DbSet<Food> FoodItems { get; set; } // Represents table for Food items
+        public DbSet<User> Users { get; set; } // Represents table for Users
+        public DbSet<Log> Logs { get; set; } // Represents table for Logs
+
+        public AppDatabase(DbContextOptions<AppDatabase> options) : base(options)
         {
-            var foodItems = new List<Food>();
-
-            using (var connection = new SqliteConnection(con))
-            {
-                await connection.OpenAsync();
-
-                var exec = connection.CreateCommand();
-                exec.CommandText = "SELECT * FROM FoodItems";
-
-                using (var reader = await exec.ExecuteReaderAsync())
-                {
-                    while (await reader.ReadAsync())
-                    {
-                        foodItems.Add(ReadFoodItem(reader));
-                    }
-                }
-            }
-
-            return foodItems;
         }
 
-        private Food ReadFoodItem(SqliteDataReader reader)
+        // This function is for entity framework to setup the db connection
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            return new Food
-            {
-                Name = reader.GetString(0),
-                Calories = reader.GetDouble(1),
-                Fat = reader.GetDouble(2),
-                Sodium = reader.GetDouble(3),
-                Carbohydrates = reader.GetDouble(4),
-                Fiber = reader.GetDouble(5),
-                Sugars = reader.GetDouble(6),
-                Protein = reader.GetDouble(7)
-            };
+            optionsBuilder.UseSqlite("Data Source=calorific.db"); // Set datasource
+        }
+
+        // This function is for entity framweork to configure the db model
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Food>().HasKey(f => f.Id); // Set primary key
+            modelBuilder.Entity<User>().HasKey(u => u.Id);
+            modelBuilder.Entity<Log>().HasKey(l => l.Id);
+        }
+    }
+
+    public class FoodService
+    {
+        private readonly AppDatabase db; // readonly instance of database
+
+        public FoodService(AppDatabase database) // FoodService class with AppDatabase instance as param
+        {
+            db = database; //Assign AppDatabase to db
+        }
+
+        public async Task<List<Food>> GetFoodItems()  // Function to get all food items from the db (using async for concurrency so multiple tasks can be run)
+        {
+            return await db.FoodItems.ToListAsync(); // Returning a list of food items
         }
 
         public async Task AddFoodItem(string name, double calories, double fat, double sodium, double carbohydrates, double fiber, double sugars, double protein)
         {
-            using (var connection = new SqliteConnection(con))
+            // Adding a new food item to the FoodItems table
+            db.FoodItems.Add(new Food
             {
-                await connection.OpenAsync();
-
-                var exec = connection.CreateCommand();
-                exec.CommandText = "INSERT INTO FoodItems (Name, Calories, Fat, Sodium, Carbohydrates, Fiber, Sugars, Protein) VALUES (@Name, @Calories, @Fat, @Sodium, @Carbohydrates, @Fiber, @Sugars, @Protein)";
-                exec.Parameters.AddWithValue("@Name", name);
-                exec.Parameters.AddWithValue("@Calories", calories);
-                exec.Parameters.AddWithValue("@Fat", fat);
-                exec.Parameters.AddWithValue("@Sodium", sodium);
-                exec.Parameters.AddWithValue("@Carbohydrates", carbohydrates);
-                exec.Parameters.AddWithValue("@Fiber", fiber);
-                exec.Parameters.AddWithValue("@Sugars", sugars);
-                exec.Parameters.AddWithValue("@Protein", protein);
-
-                await exec.ExecuteNonQueryAsync();
-            }
+                Name = name,
+                Calories = calories,
+                Fat = fat,
+                Sodium = sodium,
+                Carbohydrates = carbohydrates,
+                Fiber = fiber,
+                Sugars = sugars,
+                Protein = protein
+            });
+            await db.SaveChangesAsync();
         }
 
         public async Task AddUser(string name, string gender, int age, double height, double weight, string selectedAmr, string selectedGoal)
         {
-            using (var connection = new SqliteConnection(con))
+            // Adding a new user to the Users table
+            db.Users.Add(new User
             {
-                await connection.OpenAsync();
-
-                var exec = connection.CreateCommand();
-                exec.CommandText = "INSERT INTO Users (Name, Gender, Age, Height, Weight, SelectedAmr, SelectedGoal) VALUES (@Name, @Gender, @Age, @Height, @Weight, @SelectedAmr, @SelectedGoal)";
-                exec.Parameters.AddWithValue("@Name", name);
-                exec.Parameters.AddWithValue("@Gender", gender);
-                exec.Parameters.AddWithValue("@Age", age);
-                exec.Parameters.AddWithValue("@Height", height);
-                exec.Parameters.AddWithValue("@Weight", weight);
-                exec.Parameters.AddWithValue("@SelectedAmr", selectedAmr);
-                exec.Parameters.AddWithValue("@SelectedGoal", selectedGoal);
-
-                await exec.ExecuteNonQueryAsync();
-            }
+                Name = name,
+                Gender = gender,
+                Age = age,
+                Height = height,
+                Weight = weight,
+                SelectedAmr = selectedAmr,
+                SelectedGoal = selectedGoal
+            });
+            await db.SaveChangesAsync();
         }
 
         public async Task<User> GetUser(string name)
         {
-            using (var connection = new SqliteConnection(con))
-            {
-                await connection.OpenAsync();
-
-                var exec = connection.CreateCommand();
-                exec.CommandText = "SELECT * FROM Users WHERE Name = @Name";
-                exec.Parameters.AddWithValue("@Name", name);
-
-                using (var reader = await exec.ExecuteReaderAsync())
-                {
-                    if (await reader.ReadAsync())
-                    {
-                        return new User
-                        {
-                            Name = reader.GetString(0),
-                            Gender = reader.GetString(1),
-                            Age = reader.GetInt32(2),
-                            Height = reader.GetDouble(3),
-                            Weight = reader.GetDouble(4),
-                            SelectedAmr = reader.GetString(5),
-                            SelectedGoal = reader.GetString(6)
-                        };
-                    }
-                }
-            }
-
-            return null;
+            return await db.Users.FirstOrDefaultAsync(u => u.Name == name);
         }
 
         public async Task AddLog(Log log, string username)
         {
-            using (var connection = new SqliteConnection(con))
+            // Adding a new log to the Logs table
+            db.Logs.Add(new Log
             {
-                await connection.OpenAsync();
-
-                var exec = connection.CreateCommand();
-                exec.CommandText = @"INSERT INTO Logs (Username, Date, Time, FoodName, Grams, Calories, Fat, Sodium, Carbohydrates, Fiber, Sugars, Protein)
-                             VALUES (@Username, @Date, @Time, @FoodName, @Grams, @Calories, @Fat, @Sodium, @Carbohydrates, @Fiber, @Sugars, @Protein)";
-                exec.Parameters.AddWithValue("@Username", username);
-                exec.Parameters.AddWithValue("@Date", log.Date);
-                exec.Parameters.AddWithValue("@Time", log.Time);
-                exec.Parameters.AddWithValue("@FoodName", log.FoodName);
-                exec.Parameters.AddWithValue("@Grams", log.Grams);
-                exec.Parameters.AddWithValue("@Calories", log.Calories);
-                exec.Parameters.AddWithValue("@Fat", log.Fat);
-                exec.Parameters.AddWithValue("@Sodium", log.Sodium);
-                exec.Parameters.AddWithValue("@Carbohydrates", log.Carbohydrates);
-                exec.Parameters.AddWithValue("@Fiber", log.Fiber);
-                exec.Parameters.AddWithValue("@Sugars", log.Sugars);
-                exec.Parameters.AddWithValue("@Protein", log.Protein);
-
-                await exec.ExecuteNonQueryAsync();
-            }
+                Username = username,
+                Date = log.Date,
+                Time = log.Time,
+                FoodName = log.FoodName,
+                Grams = log.Grams,
+                Calories = log.Calories,
+                Fat = log.Fat,
+                Sodium = log.Sodium,
+                Carbohydrates = log.Carbohydrates,
+                Fiber = log.Fiber,
+                Sugars = log.Sugars,
+                Protein = log.Protein
+            });
+            await db.SaveChangesAsync();
         }
-
 
         public async Task<List<Log>> GetLogsForUser(string userName)
         {
-            var logs = new List<Log>();
-
-            using var connection = new SqliteConnection(con);
-            await connection.OpenAsync();
-
-            var exec = connection.CreateCommand();
-            exec.CommandText = "SELECT * FROM Logs WHERE Username = @Username";
-            exec.Parameters.AddWithValue("@Username", userName);
-
-            var reader = await exec.ExecuteReaderAsync();
-
-            while (await reader.ReadAsync())
-            {
-                logs.Add(ReadLogItems(reader));
-            }
-
-            return logs;
-        }
-        private Log ReadLogItems(SqliteDataReader reader)
-        {
-            return new Log
-            {
-                Date = reader.GetDateTime(1),
-                Time = reader.GetDateTime(2),
-                FoodName = reader.GetString(3),
-                Grams = reader.GetInt32(4),
-                Calories = reader.GetDouble(5),
-                Fat = reader.GetDouble(6),
-                Sodium = reader.GetDouble(7),
-                Carbohydrates = reader.GetDouble(8),
-                Fiber = reader.GetDouble(9),
-                Sugars = reader.GetDouble(10),
-                Protein = reader.GetDouble(11)
-            };
+            return await db.Logs.Where(l => l.Username == userName).ToListAsync();
         }
 
-
-
-        //////////////////////////////////////////INITIALIZING AND POPULATING START DB//////////////////////////////////////////
-        public async Task InitializeDatabase()
-        {
-            using (var connection = new SqliteConnection(con))
-            {
-                await connection.OpenAsync();
-
-                var new_tables = connection.CreateCommand();
-                new_tables.CommandText = @"
-                    CREATE TABLE IF NOT EXISTS FoodItems (
-                        Name TEXT PRIMARY KEY,
-                        Calories REAL,
-                        Fat REAL,
-                        Sodium REAL,
-                        Carbohydrates REAL,
-                        Fiber REAL,
-                        Sugars REAL,
-                        Protein REAL
-                    );
-
-                    CREATE TABLE IF NOT EXISTS Users (
-                        Name TEXT PRIMARY KEY,
-                        Gender TEXT,
-                        Age INTEGER,
-                        Height REAL,
-                        Weight REAL,
-                        SelectedAmr TEXT,
-                        SelectedGoal TEXT
-                    );
-
-                    CREATE TABLE IF NOT EXISTS Logs (
-                        Username TEXT,
-                        Date TEXT,
-                        Time DATETIME,
-                        FoodName TEXT,
-                        Grams INTEGER,
-                        Calories REAL,
-                        Fat REAL,
-                        Sodium REAL,
-                        Carbohydrates REAL,
-                        Fiber REAL,
-                        Sugars REAL,
-                        Protein REAL
-                    );
-                ";
-
-                await new_tables.ExecuteNonQueryAsync();
-            }
-        }
+        //Prepopulate with food items (values per 100g of item)
         public async Task PopulateFoodItems()
         {
-            await AddFoodItem("Steak", 250, 26, 65, 0, 0, 0, 26);
-            await AddFoodItem("Chicken", 165, 3.6, 74, 0, 0, 0, 31);
-            await AddFoodItem("Cheeseburger", 250, 12, 300, 33, 0, 6, 15);
-            await AddFoodItem("Rice", 130, 0.3, 0, 28, 0, 0, 2.7);
-            await AddFoodItem("Pizza", 285, 12, 683, 35, 2.3, 3.2, 12);
-            await AddFoodItem("Fries", 365, 17, 210, 63, 6, 0.6, 3.4);
-            await AddFoodItem("Bread", 265, 2.9, 498, 49, 3, 3, 8);
-            await AddFoodItem("Pasta", 131, 1.1, 4.5, 25, 1.3, 1.4, 5.2);
-            await AddFoodItem("Cheese", 402, 33, 621, 2.2, 0, 0, 25);
+            var foodItems = new List<Food>
+            {
+                new Food { Name = "Steak", Calories = 250, Fat = 26, Sodium = 65, Protein = 26 },
+                new Food { Name = "Chicken", Calories = 165, Fat = 3.6, Sodium = 74, Protein = 31 },
+                new Food { Name = "Cheeseburger", Calories = 250, Fat = 12, Sodium = 300, Carbohydrates = 33, Sugars = 6, Protein = 15 },
+                new Food { Name = "Rice", Calories = 130, Fat = 0.3, Carbohydrates = 28, Protein = 2.7 },
+                new Food { Name = "Pizza", Calories = 285, Fat = 12, Sodium = 683, Carbohydrates = 35, Fiber = 2.3, Sugars = 3.2, Protein = 12 },
+                new Food { Name = "Fries", Calories = 365, Fat = 17, Sodium = 210, Carbohydrates = 63, Fiber = 6, Sugars = 0.6, Protein = 3.4 },
+                new Food { Name = "Bread", Calories = 265, Fat = 2.9, Sodium = 498, Carbohydrates = 49, Fiber = 3, Sugars = 3, Protein = 8 },
+                new Food { Name = "Pasta", Calories = 131, Fat = 1.1, Sodium = 4.5, Carbohydrates = 25, Fiber = 1.3, Sugars = 1.4, Protein = 5.2 },
+                new Food { Name = "Cheese", Calories = 402, Fat = 33, Sodium = 621, Carbohydrates = 2.2, Protein = 25 }
+            };
+
+            db.FoodItems.AddRange(foodItems);
+            await db.SaveChangesAsync();
         }
     }
 }
