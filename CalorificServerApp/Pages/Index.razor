@@ -510,6 +510,7 @@
     private async void AddItem()
     {
         await foodService.AddFoodItem(foodname, foodcalories, foodfats, foodsodium, foodcarbohydrates, foodfiber, foodsugars, foodprotein);
+        //Reset the fields after adding
         foodname = "";
         foodcalories = 0;
         foodfats = 0;
