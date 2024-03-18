@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CalorificServerApp.Data
 {
-    public class AppDatabase : DbContext // Define a class named 'AppDatabase' that inherits from DbContext
+    public class AppDatabase : DbContext
     {
         public DbSet<Food> FoodItems { get; set; } // Represents table for Food items
         public DbSet<User> Users { get; set; } // Represents table for Users
@@ -76,7 +76,7 @@ namespace CalorificServerApp.Data
 
         public async Task<User> GetUser(string name)
         {
-            return await db.Users.FirstOrDefaultAsync(u => u.Name == name);
+            return await db.Users.FirstOrDefaultAsync(u => u.Name == name); //Use firstordefault instead of find because searched by username
         }
 
         public async Task AddLog(Log log, string username)
@@ -100,9 +100,9 @@ namespace CalorificServerApp.Data
             await db.SaveChangesAsync();
         }
 
-        public async Task<List<Log>> GetLogsForUser(string userName)
+        public async Task<List<Log>> GetLogsForUser(string username)
         {
-            return await db.Logs.Where(l => l.Username == userName).ToListAsync();
+            return await db.Logs.Where(l => l.Username == username).ToListAsync();
         }
 
         //Prepopulate with food items (values per 100g of item)
