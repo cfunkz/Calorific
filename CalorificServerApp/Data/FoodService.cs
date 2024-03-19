@@ -104,25 +104,5 @@ namespace CalorificServerApp.Data
         {
             return await db.Logs.Where(l => l.Username == username).ToListAsync();
         }
-
-        //Prepopulate with food items (values per 100g of item)
-        public async Task PopulateFoodItems()
-        {
-            var foodItems = new List<Food>
-            {
-                new Food { Name = "Steak", Calories = 250, Fat = 26, Sodium = 65, Protein = 26 },
-                new Food { Name = "Chicken", Calories = 165, Fat = 3.6, Sodium = 74, Protein = 31 },
-                new Food { Name = "Cheeseburger", Calories = 250, Fat = 12, Sodium = 300, Carbohydrates = 33, Sugars = 6, Protein = 15 },
-                new Food { Name = "Rice", Calories = 130, Fat = 0.3, Carbohydrates = 28, Protein = 2.7 },
-                new Food { Name = "Pizza", Calories = 285, Fat = 12, Sodium = 683, Carbohydrates = 35, Fiber = 2.3, Sugars = 3.2, Protein = 12 },
-                new Food { Name = "Fries", Calories = 365, Fat = 17, Sodium = 210, Carbohydrates = 63, Fiber = 6, Sugars = 0.6, Protein = 3.4 },
-                new Food { Name = "Bread", Calories = 265, Fat = 2.9, Sodium = 498, Carbohydrates = 49, Fiber = 3, Sugars = 3, Protein = 8 },
-                new Food { Name = "Pasta", Calories = 131, Fat = 1.1, Sodium = 4.5, Carbohydrates = 25, Fiber = 1.3, Sugars = 1.4, Protein = 5.2 },
-                new Food { Name = "Cheese", Calories = 402, Fat = 33, Sodium = 621, Carbohydrates = 2.2, Protein = 25 }
-            };
-
-            db.FoodItems.AddRange(foodItems);
-            await db.SaveChangesAsync();
-        }
     }
 }
