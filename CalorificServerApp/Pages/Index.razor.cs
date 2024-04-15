@@ -4,21 +4,21 @@ namespace CalorificServerApp.Pages
 {
     public partial class Index
     {
-        private string userRegistred = "no";
-        private string loggedInUsername = "";
-        private int caloriesNeeded;
-        private string Name = "";
-        private DateTime Date = DateTime.Now;
-        private string FoodName = "Steak";
-        private string Gender = "Male";
-        private int Age;
-        private int Height;
-        private int Weight;
-        private string SelectedAmr = "1.2";
-        private string SelectedGoal = "maintainWeight";
-        private User user;
-        private List<Log> logs = new List<Log>();
-        private Log newEntry = new Log { Date = DateTime.Now, FoodName = "Steak" };
+        private string userRegistred = "no"; // Default state when page loads first time
+        private string loggedInUsername = ""; //Logged in username is set to empty string
+        private int caloriesNeeded; //Variable for displaying calories needed
+        private string Name = ""; //Variable for Name needed
+        private DateTime Date = DateTime.Now; //Default value for todays date
+        private string FoodName = "Steak"; // Default value when adding (FoodItem)
+        private string Gender = "Male"; // Default value when registering (User)
+        private int Age; // Age value when registering (User)
+        private int Height; // Height value when registering (User)
+        private int Weight; // Weight value when registering (User)
+        private string SelectedAmr = "1.2"; // Default Amr value when registering user
+        private string SelectedGoal = "maintainWeight"; // Default goal when registering user
+        private User user; // Assign variable to User object
+        private List<Log> logs = new List<Log>(); // Initialize logs list
+        private Log newEntry = new Log { Date = DateTime.Now, FoodName = "Steak" }; // Default calorie (log) entry values
         private List<Food> foodItems = new List<Food>(); // Initialize foodItems list
 
         public string foodname = "";
@@ -30,10 +30,11 @@ namespace CalorificServerApp.Pages
         public double foodsugars;
         public double foodprotein;
 
+        //This is called on page load
+        //It's an asynchronous method that gets the list of food items
         protected override async Task OnInitializedAsync()
         {
             foodItems = await foodService.GetFoodItems();
-
         }
 
         private async void AddEntry()
