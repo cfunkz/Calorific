@@ -5,6 +5,7 @@ namespace CalorificServerApp.Data
 {
     public class Food
     {
+        //Set primary key
         [Key]
         public int Id { get; set; }
         public string Name { get; set; }
@@ -19,6 +20,7 @@ namespace CalorificServerApp.Data
 
     public class User
     {
+        //Set primary key
         [Key]
         public int Id { get; set; }
         public string Name { get; set; }
@@ -32,6 +34,7 @@ namespace CalorificServerApp.Data
     }
     public class Log
     {
+        //Set primary key
         [Key]
         public int Id { get; set; }
         public string Username { get; set; }
