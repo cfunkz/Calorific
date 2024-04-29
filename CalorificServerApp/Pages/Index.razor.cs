@@ -155,7 +155,7 @@ namespace CalorificServerApp.Pages
             else
             {
                 await foodService.AddUser(Name, Password, Gender, Age, Height, Weight, SelectedAmr, SelectedGoal);
-                userRegistred = "yes"; //Set to user registred to login
+                userRegistred = "yes"; //Set to user registred to "yes"
                 LogIn();//Login
             }
         }
