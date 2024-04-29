@@ -160,22 +160,32 @@ namespace CalorificServerApp.Pages
             }
         }
 
-        private async void AddItem()
+        public async Task AddEntry()
         {
             if (newEntry.Grams <= 0)
             {
                 return;
             }
-            await foodService.AddFoodItem(foodname, foodcalories, foodfats, foodsodium, foodcarbohydrates, foodfiber, foodsugars, foodprotein); //Add food item to db
-            foodname = ""; //Reset the forms to default
-            foodcalories = 0;
-            foodfats = 0;
-            foodsodium = 0;
-            foodcarbohydrates = 0;
-            foodfiber = 0;
-            foodsugars = 0;
-            foodprotein = 0;
-            foodItems = await foodService.GetFoodItems(); // Refresh food items
+            // Add log entry only if grams is > than 0
+            await foodService.AddLog(new Log
+            {
+                Username = loggedInUsername,
+                Date = newEntry.Date,
+                Time = newEntry.Time,
+                FoodName = newEntry.FoodName,
+                Grams = newEntry.Grams,
+                Calories = newEntry.Calories,
+                Fat = newEntry.Fat,
+                Sodium = newEntry.Sodium,
+                Carbohydrates = newEntry.Carbohydrates,
+                Fiber = newEntry.Fiber,
+                Sugars = newEntry.Sugars,
+                Protein = newEntry.Protein
+            }, loggedInUsername);
+        
+            // Clear input fields after adding the entry
+            newEntry = new Log();
+            newEntry.Date = DateTime.Today;
         }
     }
 }
