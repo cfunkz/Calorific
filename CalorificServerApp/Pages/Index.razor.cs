@@ -4,21 +4,22 @@ namespace CalorificServerApp.Pages
 {
     public partial class Index
     {
-        private string userRegistred = "no"; // Default state when page loads first time
-        private string loggedInUsername = ""; //Logged in username is set to empty string
-        private int caloriesNeeded; //Variable for displaying calories needed
-        private string Name = ""; //Variable for Name needed
-        private DateTime Date = DateTime.Now; //Default value for todays date
-        private string FoodName = "Steak"; // Default value when adding (FoodItem)
-        private string Gender = "Male"; // Default value when registering (User)
-        private int Age; // Age value when registering (User)
-        private int Height; // Height value when registering (User)
-        private int Weight; // Weight value when registering (User)
-        private string SelectedAmr = "1.2"; // Default Amr value when registering user
-        private string SelectedGoal = "maintainWeight"; // Default goal when registering user
-        private User user; // Assign variable to User object
-        private List<Log> logs = new List<Log>(); // Initialize logs list
-        private Log newEntry = new Log { Date = DateTime.Now, FoodName = "Steak" }; // Default calorie (log) entry values
+        private string userRegistred = "no";
+        private string loggedInUsername = "";
+        private string Password = "";
+        private int caloriesNeeded;
+        private string Name = "";
+        private DateTime Date = DateTime.Now;
+        private string FoodName = "Steak";
+        private string Gender = "Male";
+        private int Age;
+        private int Height;
+        private int Weight;
+        private string SelectedAmr = "1.2";
+        private string SelectedGoal = "maintainWeight";
+        private User user;
+        private List<Log> logs = new List<Log>();
+        private Log newEntry = new Log { Date = DateTime.Now, FoodName = "Steak" };
         private List<Food> foodItems = new List<Food>(); // Initialize foodItems list
 
         public string foodname = "";
@@ -30,11 +31,10 @@ namespace CalorificServerApp.Pages
         public double foodsugars;
         public double foodprotein;
 
-        //This is called on page load
-        //It's an asynchronous method that gets the list of food items
         protected override async Task OnInitializedAsync()
         {
             foodItems = await foodService.GetFoodItems();
+
         }
 
         private async void AddEntry()
@@ -81,14 +81,14 @@ namespace CalorificServerApp.Pages
 
         private async void LogIn()
         {
-            if (string.IsNullOrEmpty(Name))
+            if (string.IsNullOrEmpty(Name) || string.IsNullOrEmpty(Password)) //INPUT VALIDATION
             {
                 userRegistred = "error";
                 return;
             }
 
             user = await foodService.GetUser(Name);
-            if (user != null)
+            if (user != null && user.Password == Password)
             {
                 userRegistred = "yes";
                 loggedInUsername = Name;
@@ -132,9 +132,8 @@ namespace CalorificServerApp.Pages
         private void GoToRegister()
         {
             userRegistred = "calculator";
-
         }
-
+        
 
         private void GoToLogin()
         {
@@ -144,27 +143,27 @@ namespace CalorificServerApp.Pages
 
         private async void Register()
         {
-            var existingUser = await foodService.GetUser(Name);
-            if (existingUser != null)
+            var user = await foodService.GetUser(Name); //Check existing user data
+            if (user != null) // If existing user
             {
-                userRegistred = "error2";
+                userRegistred = "error2"; //Send to errror message number2
             }
-            else if (Age <= 0 || Height <= 0 || Weight <= 0)
+            else if (Age <= 0 || Height <= 0 || Weight <= 0 || string.IsNullOrEmpty(Name) || string.IsNullOrEmpty(Password)) //Input validation
             {
-                userRegistred = "error3";
+                userRegistred = "error3"; //Send to errror message number3
             }
             else
             {
-                await foodService.AddUser(Name, Gender, Age, Height, Weight, SelectedAmr, SelectedGoal);
-                userRegistred = "yes";
-                LogIn();
+                await foodService.AddUser(Name, Password, Gender, Age, Height, Weight, SelectedAmr, SelectedGoal);
+                userRegistred = "yes"; //Set to user registred to login
+                LogIn();//Login
             }
         }
 
         private async void AddItem()
         {
-            await foodService.AddFoodItem(foodname, foodcalories, foodfats, foodsodium, foodcarbohydrates, foodfiber, foodsugars, foodprotein);
-            foodname = "";
+            await foodService.AddFoodItem(foodname, foodcalories, foodfats, foodsodium, foodcarbohydrates, foodfiber, foodsugars, foodprotein); //Add food item to db
+            foodname = ""; //Reset the forms to default
             foodcalories = 0;
             foodfats = 0;
             foodsodium = 0;
@@ -172,7 +171,7 @@ namespace CalorificServerApp.Pages
             foodfiber = 0;
             foodsugars = 0;
             foodprotein = 0;
-            foodItems = await foodService.GetFoodItems();
+            foodItems = await foodService.GetFoodItems(); // Refresh food items
         }
     }
 }
