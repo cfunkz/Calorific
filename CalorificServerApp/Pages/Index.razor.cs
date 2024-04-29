@@ -162,7 +162,7 @@ namespace CalorificServerApp.Pages
 
         private async void AddItem()
         {
-            if (foodcalories >= 0) 
+            if (foodcalories > 0) 
             {
                 await foodService.AddFoodItem(foodname, foodcalories, foodfats, foodsodium, foodcarbohydrates, foodfiber, foodsugars, foodprotein); //Add food item to db
                 foodname = ""; //Reset the forms to default
