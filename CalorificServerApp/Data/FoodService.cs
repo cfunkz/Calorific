@@ -60,7 +60,7 @@ namespace CalorificServerApp.Data
 
         public async Task AddUser(string name, string password, string gender, int age, double height, double weight, string selectedAmr, string selectedGoal)
         {
-            // Adding a new user to the Users table
+            // Adding a new user to the Users table with the provided arguments
             db.Users.Add(new User
             {
                 Name = name,
@@ -77,17 +77,17 @@ namespace CalorificServerApp.Data
 
         public async Task<User> GetUser(string name)
         {
-            return await db.Users.FirstOrDefaultAsync(u => u.Name == name); 
+            return await db.Users.FirstOrDefaultAsync(u => u.Name == name);  // Finds first or default user by name
         }
 
         public async Task<User> CheckUser(string name)
         {
-            return await db.Users.FirstOrDefaultAsync(u => u.Name == name);
+            return await db.Users.FirstOrDefaultAsync(u => u.Name == name); // Finds first or default user by name
         }
 
         public async Task AddLog(Log log, string username)
         {
-            // Adding a new log to the Logs table
+            // Adding a new log to the Logs table with the provided arguments
             db.Logs.Add(new Log
             {
                 Username = username,
