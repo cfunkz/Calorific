@@ -270,7 +270,7 @@
                         </div>
                         <!-- Use blazor lambda function to check for entered grams -->
                         <!--https://www.telerik.com/blogs/how-to-pass-arguments-to-your-onclick-functions-blazor-->
-                        <button style="margin-top:10px;" @onclick="()=> { if(newEntry.Grams > 0) AddEntry(); }" class="btn btn-primary">Save Food</button>
+                        <button style="margin-top:10px;" @onclick="AddEntry" class="btn btn-primary">Save Food</button>
                     </div>
                 </div>
             }
