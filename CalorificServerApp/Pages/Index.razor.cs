@@ -4,22 +4,22 @@ namespace CalorificServerApp.Pages
 {
     public partial class Index
     {
-        private string userRegistred = "no";
-        private string loggedInUsername = "";
-        private string Password = "";
-        private int caloriesNeeded;
-        private string Name = "";
-        private DateTime Date = DateTime.Now;
-        private string FoodName = "Steak";
-        private string Gender = "Male";
+        private string userRegistred = "no"; //Default user registred = no
+        private string loggedInUsername = ""; //Default logged in username variable
+        private string Password = ""; // Default password variable
+        private int caloriesNeeded; // calories needed variable
+        private string Name = ""; // Username variable
+        private DateTime Date = DateTime.Now; // Set Date to datetime now
+        private string FoodName = "Steak"; // default first item for food log = steak
+        private string Gender = "Male"; // Default gender for registering
         private int Age;
         private int Height;
         private int Weight;
-        private string SelectedAmr = "1.2";
-        private string SelectedGoal = "maintainWeight";
-        private User user;
-        private List<Log> logs = new List<Log>();
-        private Log newEntry = new Log { Date = DateTime.Now, FoodName = "Steak" };
+        private string SelectedAmr = "1.2"; // Default amr goal
+        private string SelectedGoal = "maintainWeight"; // Default weight gain/loss goal
+        private User user; // user variable
+        private List<Log> logs = new List<Log>(); // Logs list
+        private Log newEntry = new Log { Date = DateTime.Now, FoodName = "Steak" }; // New log entry set to datetime now and foodname steak as default 
         private List<Food> foodItems = new List<Food>(); // Initialize foodItems list
 
         public string foodname = "";
