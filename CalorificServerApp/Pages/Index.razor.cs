@@ -53,13 +53,13 @@ namespace CalorificServerApp.Pages
                 newEntry.Fiber = (int)(selectedFood.Fiber * (grams / 100.0));
                 newEntry.Sugars = (int)(selectedFood.Sugars * (grams / 100.0));
                 newEntry.Protein = (int)(selectedFood.Protein * (grams / 100.0));
+                // Add the log entry to the database
+                await foodService.AddLog(newEntry, loggedInUsername);
             }
             else
             {
                 userRegistred = "error4";
             }
-            // Add the log entry to the database
-            await foodService.AddLog(newEntry, loggedInUsername);
             // Refresh the logs list
             logs = await foodService.GetLogsForUser(loggedInUsername);
         }
