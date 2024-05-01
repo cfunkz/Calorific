@@ -1,4 +1,4 @@
-﻿@page "/"
+@page "/"
 @using CalorificServerApp.Data
 @inject FoodService foodService
 
@@ -275,7 +275,7 @@
             else if (userRegistred == "error")
             {
                 <div class="alert alert-danger d-flex justify-content-between align-items-center" role="alert">
-                    User not found. Please check the entered name.
+                    User not found or details not correct. Please check the entered name or password.
                     <button @onclick="GoToLogin" class="btn btn-secondary">Back To Login</button>
                 </div>
             }
